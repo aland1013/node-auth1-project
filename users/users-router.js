@@ -2,10 +2,10 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 
 const Users = require('./users-model');
-const restricted = require('./restricted-middleware');
+// const restricted = require('./restricted-middleware');
 
 /* ----- GET /api/users ---- */
-router.get('/users', restricted, (req, res) => {
+router.get('/users', (req, res) => {
   Users.find()
     .then((users) => {
       res.status(200).json(users);
@@ -38,7 +38,8 @@ router.post('/login', (req, res) => {
     .first()
     .then((user) => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        req.session.cookie.userId = user.id;
+        req.session.user = user;
+        console.log(req.session.cookie);
         res.status(200).json({ message: 'Logged in' });
       } else {
         res.status(401).json({ message: 'You shall not pass!' });

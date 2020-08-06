@@ -31,6 +31,15 @@ server.use(express.json());
 server.use(cors());
 server.use(session(sessionConfig));
 
+// global middleware on /api/users for stretch
+server.use('/api/users', (req, res, next) => {
+  if (req.session && req.session.user) {
+    next();
+  } else {
+    res.status(403).json({ message: 'not authorized' });
+  }
+});
+
 server.use('/api', usersRouter);
 
 server.get('/', (req, res) => {
